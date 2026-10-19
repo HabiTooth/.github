@@ -111,23 +111,22 @@
 <br>
 
 ### 3.2. 서비스 흐름도
-<img width="800" alt="서비스 흐름도" src="https://github.com/user-attachments/assets/f711fa6e-5686-4b7b-b069-33741e428cd7" />
+<img width="800" alt="서비스 흐름도" src="https://github.com/user-attachments/assets/dd8900db-633a-48ab-8f4f-dc85c7b73b3c" />
 <br>
 
 ### 3-3. AI 분석 파이프라인
 
 ```mermaid
 flowchart TD
-    A["구역 선택 · White / UV 동시 촬영"] --> B["이미지 품질 판정"]
-    B -- 부적합 --> A
-    B -- 적합 --> C["치아 세그멘테이션 · FDI 번호 부여"]
-    C --> E["White : YOLOv11-Seg 치석 검출"]
-    C --> F["UV : YOLOv11-Seg 치태 검출"]
-    E --> G["치석 영역과 겹치는 부분 제외<br/>(2차 검증)"]
+    A["White · UV<br/>이미지 입력"] --> B["이미지 품질 판정<br/>(흐림 · 밝기 · 치아 인식)"]
+    B -- 부적합 --> R["재촬영 안내"]
+    B -- 적합 --> C["치아 세그멘테이션<br/>FDI 번호 부여"]
+    C --> E["White<br/>치석 검출<br/>(YOLOv11-Seg)"]
+    C --> F["UV<br/>치태 검출<br/>(YOLOv11-Seg)"]
+    E --> G["치석 영역 제외<br/>(2차 검증)"]
     F --> G
-    G --> H["치아별 면적 · 구역 점수 계산"]
-    H --> I["LLM 리포트 생성 · 이전 검사와 비교"]
-    I --> J["3D 구강 시각화 · 리포트 · 이력 확인"]
+    G --> H["치아별 면적<br/>구역 점수 계산"]
+    H --> I["LLM 리포트 생성<br/>이전 검사와 비교"]
 ```
 <br>
 
@@ -582,202 +581,6 @@ public static Double combineZoneScore(Double calculusZoneScore, Double plaqueZon
   <tr><td><a href="https://github.com/HabiTooth/26_HF001/blob/main/frontend/src/constants/scanZones.ts">scanZones.ts</a></td><td>13개 촬영 구역과 치아 번호 매핑</td></tr>
   <tr><td><a href="https://github.com/HabiTooth/26_HF001/blob/main/frontend/src/views/ReportPage.tsx">ReportPage.tsx</a></td><td>분석 리포트 화면</td></tr>
 </table>
-
-
-
-
-
-<img src="로고_URL" align="left" width="130" />
-
-### 오래도록 건강한 내 치아를 위해, HabiTooth
-가정용 AI 구강 모니터링 디바이스
-
-<img src="https://img.shields.io/badge/2026_한이음_드림업-26__HF001-2B4A8B?labelColor=1E2A44" /> <img src="https://img.shields.io/badge/Team-2233-2B4A8B?labelColor=1E2A44" /> <img src="https://img.shields.io/badge/📷_백색광·UV_촬영-D6E6FF" /> <img src="https://img.shields.io/badge/🔍_AI_치석·치태_검출-D6E6FF" /> <img src="https://img.shields.io/badge/🦷_3D_구강_리포트-D6E6FF" />
-
-<br clear="left"/>
-
-- 프론트엔드 저장소 : [HabiTooth_FE](https://github.com/HabiTooth/HabiTooth_FE)
-- 백엔드 저장소 : [HabiTooth_BE](https://github.com/HabiTooth/HabiTooth_BE)
-
-## **💡1. 프로젝트 개요**
-
-<img width="100%" alt="HabiTooth" src="대표이미지_URL" />
-
-**1-1. 프로젝트 소개**
-- 프로젝트 명 : HabiTooth (해비투스)
-- 프로젝트 정의 : 집에서 백색광·UV 촬영으로 치석과 치태를 확인하고, AI 리포트로 관리 습관을 잡아주는 저비용 가정용 구강 모니터링 서비스
-- 서비스 흐름 : 구역 선택·촬영 → 치아별 AI 검출 → 3D 구강 시각화·관리 안내 → 같은 부위 변화 확인
-
-**1-2. 개발 배경 및 필요성**
-
-<img width="100%" alt="치주질환 통계" src="통계_이미지_URL" />
-
-- 치은염·치주질환 진료인원은 10년 사이 1,343만 명에서 1,997만 명으로 늘었지만, 치석은 쌓여도 통증이 없어 질환이 될 때까지 방치하기 쉽습니다.
-
-<img width="100%" alt="설문 결과" src="설문_이미지_URL" />
-
-- 권장 주기인 6개월마다 검진을 받는 사람은 16.1%뿐이고, 85.6%가 집에서 직접 구강 상태를 확인해 봤지만 60.2%는 자기 구강 상태를 잘 모른다고 답했습니다.
-- 치태는 꾸준히 관리하면 치석이 되는 것을 예방할 수 있지만, 대부분은 치과에 가야만 내 구강 상태를 알 수 있습니다. 정기 검진 사이의 몇 달 동안은 어디를 잘 못 닦고 있는지 스스로 확인할 방법이 없어 같은 부위에 치태가 계속 쌓이게 됩니다.
-- HabiTooth는 이 공백을 메우기 위해 집에서 직접 촬영하고, 관리가 필요한 부위를 치아 단위로 알려주는 보급형 구강 모니터링 서비스입니다.
-
-**1-3. 프로젝트 특장점**
-- 고가의 치과 장비 대신 ESP32-S3 기반 보급형 디바이스로, 집에서도 치석과 치태를 나눠 확인할 수 있는 분석 환경을 구현
-- 백색광 영상은 치석을, UV 영상은 형광 반응이 나타난 치태를 각각 YOLOv11-Seg로 찾은 뒤, 치석 영역과 겹치는 부분을 제외하는 2차 검증으로 둘을 구분
-- 405nm UV 형광은 치과용 형광 장비(QLF)에도 쓰이는 원리로, 0.3mm 황색 PVC 필터로 반사광을 줄여 붉은 형광을 또렷하게 촬영
-- 팀이 제작한 전용 디바이스로 85명에게서 직접 수집하고 검수한 White·UV 구강 이미지 3,003장으로 학습해, 실제 사용 환경과 같은 조건으로 모델을 구성
-- 치아 세그멘테이션과 규칙 기반 FDI 번호 부여로 결과를 치아 단위로 정리
-- 지난 검사와 비교해 변화를 짚어주는 LLM 리포트와 습관 기록을 연결해 꾸준한 관리로 이어지도록 구성
-
-**1-4. 주요 기능**
-
-<table>
-  <tr><th width="140">기능</th><th>설명</th></tr>
-  <tr><td>구강 촬영</td><td>손에 쥐고 입안에 넣어 촬영하는 핸드헬드 디바이스로 윗니 안쪽 5개, 아랫니 안쪽 5개, 바깥쪽 3개 구역 중 원하는 구역을 골라 촬영합니다. 촬영 버튼을 한 번 누르면 백색광과 UV 이미지가 함께 촬영되어 전송됩니다.</td></tr>
-  <tr><td>촬영 품질 확인</td><td>흐리거나 어두운 사진은 서버가 바로 판정해 다시 찍도록 안내합니다.</td></tr>
-  <tr><td>AI 분석</td><td>치석과 치태가 쌓인 위치를 찾아 치아별 면적과 구역 점수로 계산합니다.</td></tr>
-  <tr><td>3D 구강 시각화</td><td>관리가 필요한 치아를 3D 구강 템플릿 위에서 한눈에 확인합니다.</td></tr>
-  <tr><td>AI 리포트</td><td>이전 검사와 비교해 새로 생기거나 계속 남아 있는 부위를 알려주고, 결과에 맞는 관리 방법을 안내합니다.</td></tr>
-  <tr><td>기록 관리</td><td>검사 이력을 쌓아 구강 상태의 변화를 추적합니다.</td></tr>
-  <tr><td>습관 및 알림</td><td>양치 습관과 연속 기록을 남기고 알림으로 관리를 이어갑니다.</td></tr>
-  <tr><td>치아 프로필</td><td>결손치 등 내 치아 정보를 등록해 분석에 반영합니다.</td></tr>
-</table>
-
-**1-5. 설문으로 확인한 사용자 요구와 반영**
-
-<table>
-  <tr><th width="300">사용자 요구</th><th width="90">응답</th><th>HabiTooth의 반영</th></tr>
-  <tr><td>치석·치태 위치가 궁금함</td><td align="center"><b>62.7%</b></td><td>치아 단위 검출 결과를 3D 구강 시각화로 표시</td></tr>
-  <tr><td>관리 가이드가 궁금함</td><td align="center"><b>55.1%</b></td><td>측정 결과에 맞춘 관리 방법을 AI 리포트로 안내</td></tr>
-  <tr><td>시간에 따른 변화가 궁금함</td><td align="center"><b>37.3%</b></td><td>이전 검사와 같은 부위를 비교하는 기록 관리</td></tr>
-  <tr><td>주 1회~월 1회 확인하고 싶음</td><td align="center"><b>91.5%</b></td><td>필요한 구역만 골라 빠르게 찍는 간편 촬영</td></tr>
-  <tr><td>구매를 망설이는 이유 1위가 가격</td><td align="center"><b>63.6%</b></td><td rowspan="2">저가 임베디드 카메라와 LED 조합으로 만든 보급형 디바이스</td></tr>
-  <tr><td>적정 가격은 10만 원 이하</td><td align="center"><b>78.0%</b></td></tr>
-  <tr><td>AI 결과가 치과 방문 결정에 영향을 줄 것</td><td align="center"><b>83.9%</b></td><td>집에서 확인하고 필요할 때 치과로 이어지도록 관리 필요 부위 안내</td></tr>
-</table>
-
-<sub>설문에 응답한 118명 중 96.6%가 집에서 AI로 치아 상태를 확인하는 서비스를 들어 본 적이 없다고 답했고, 77.1%는 이런 서비스가 있다면 사용할 의향이 있다고 답했습니다(5점 중 4점 이상).</sub>
-
-**1-6. 기대 효과 및 활용 분야**
-
-<table>
-  <tr><th colspan="2">기대 효과</th></tr>
-  <tr><td width="180"><b>능동적 양치 습관 개선</b></td><td>3D 구강 모델과 관리 리포트로 내 취약 부위를 직접 확인하며 스스로 관리할 동기가 생깁니다. 어려운 용어 대신 쉬운 말로 풀어 쓴 리포트라 나이나 기기 숙련도와 관계없이 누구나 쓸 수 있습니다.</td></tr>
-  <tr><td><b>의료비 절감</b></td><td>치태·치석이 쌓이는 것을 일찍 알아차려 치주 질환으로 악화되기 전에 관리하도록 도와, 치과 진료에 드는 비용을 줄일 수 있습니다.</td></tr>
-  <tr><td><b>시공간적 제약 해소</b></td><td>수천만 원대 전문 장비의 핵심 기능을 보급형 가정용 기기로 구현해, 시간과 장소에 상관없이 구강 상태를 확인할 수 있습니다.</td></tr>
-  <tr><td><b>경제성 및 시장성</b></td><td>전문 장비보다 제작·사용 비용이 낮고 웹과 연동되는 소형 IoT 기기라 대중화가 쉽습니다. 전동칫솔·구강세정기 중심으로 성장해 온 가정용 구강 관리 시장에 AI 분석이라는 새로운 축을 더합니다.</td></tr>
-  <tr><td><b>기술적 기대 효과</b></td><td>쌓이는 촬영 데이터로 모델을 계속 고도화할 수 있고, 이중 광원 촬영과 세그멘테이션을 결합한 방식은 다른 구강 질환이나 영상 기반 헬스케어로 확장할 수 있는 기반 기술입니다.</td></tr>
-</table>
-
-<table>
-  <tr><th colspan="2">활용 분야</th></tr>
-  <tr><td width="180"><b>원격 의료·치과 연계</b></td><td>쌓인 구강 기록과 리포트를 치과와 공유해 사전 문진과 원격 상담의 기초 자료로 활용하고, 병원 방문 전후의 관리 공백을 잇습니다.</td></tr>
-  <tr><td><b>아동 양치 교육</b></td><td>양치가 부족한 구역을 3D 구강 모델 위에 보여 주며 올바른 칫솔질을 익히는 교육 도구로 활용합니다.</td></tr>
-  <tr><td><b>건강 증진형 보험</b></td><td>구강 관리 점수와 변화 추이를 보험사와 연계해, 관리를 잘하는 사용자에게 보험료 할인이나 리워드를 제공하는 모델로 활용합니다.</td></tr>
-  <tr><td><b>B2B 제휴·구독 서비스</b></td><td>치과의 내원 전 사전 문진 도구나 정기 검진 사이 관리 채널로 쓰고, 분석 결과에 맞는 구강 관리 제품을 추천하는 구독형 서비스로 확장합니다.</td></tr>
-</table>
-
-- HabiTooth는 의료기기가 아닌 구강 관리 보조 도구입니다.
-
-**1-7. 기술 스택**
-
-| 구분 | 기술 |
-|:---:|:---|
-| **Hardware** | <img src="https://img.shields.io/badge/ESP32--S3-E7352C?logo=espressif&logoColor=white" /> <img src="https://img.shields.io/badge/Arduino-00878F?logo=arduino&logoColor=white" /> |
-| **Frontend** | <img src="https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white" /> <img src="https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black" /> <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" /> <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white" /> <img src="https://img.shields.io/badge/Three.js-000000?logo=threedotjs&logoColor=white" /> |
-| **Backend** | <img src="https://img.shields.io/badge/Java_17-007396?logo=openjdk&logoColor=white" /> <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?logo=springboot&logoColor=white" /> <img src="https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white" /> |
-| **AI / LLM** | <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" /> <img src="https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white" /> <img src="https://img.shields.io/badge/PyTorch-EE4C2C?logo=pytorch&logoColor=white" /> <img src="https://img.shields.io/badge/OpenCV-5C3EE8?logo=opencv&logoColor=white" /> <img src="https://img.shields.io/badge/YOLOv11--Seg-111F68" /> <img src="https://img.shields.io/badge/Qwen-615CED" /> |
-| **Infra** | <img src="https://img.shields.io/badge/Amazon_EC2-FF9900" /> <img src="https://img.shields.io/badge/Amazon_RDS-527FFF" /> <img src="https://img.shields.io/badge/Amazon_S3-569A31" /> |
-
-## **💡2. 팀원 소개**
-
-<table>
-  <tr>
-    <td align="center" width="160"><img src="멘티1_이미지_URL" width="100"></td>
-    <td align="center" width="160"><img src="멘티2_이미지_URL" width="100"></td>
-    <td align="center" width="160"><img src="멘티3_이미지_URL" width="100"></td>
-    <td align="center" width="160"><img src="멘티4_이미지_URL" width="100"></td>
-    <td align="center" width="160"><img src="멘토_이미지_URL" width="100"></td>
-  </tr>
-  <tr>
-    <th>멘티 1 (팀장)</th>
-    <th>멘티 2</th>
-    <th>멘티 3</th>
-    <th>멘티 4</th>
-    <th>멘토</th>
-  </tr>
-  <tr>
-    <td align="center">• 프로젝트 총괄<br>• 프론트엔드<br>• 데이터 수집·라벨링<br>• UV 치태 모델 학습<br>• UI·발표·영상 디자인</td>
-    <td align="center">• 하드웨어<br>• 백엔드</td>
-    <td align="center">• 프론트엔드<br>• AI</td>
-    <td align="center">• 백엔드<br>• AI</td>
-    <td align="center">• 프로젝트 멘토<br>• 하드웨어 자문</td>
-  </tr>
-</table>
-
-## **💡3. 시스템 구성도**
-
-**3-1. 구성 요소**
-
-<table>
-  <tr><th width="160">구성 요소</th><th>역할</th></tr>
-  <tr><td>구강 촬영 디바이스</td><td>백색광·UV 촬영과 촬영 버튼 입력</td></tr>
-  <tr><td>웹 클라이언트</td><td>촬영 화면, 3D 구강 시각화, 리포트와 기록 확인</td></tr>
-  <tr><td>웹 서버</td><td>사용자 인증, 촬영 세션과 이미지 관리, 분석 결과 저장</td></tr>
-  <tr><td>AI 추론·LLM 서버</td><td>치아 세그멘테이션, 치석·치태 검출, 치아별 면적 계산, 관리 리포트 생성</td></tr>
-  <tr><td>데이터 저장소</td><td>사용자·촬영·분석·습관 기록(RDS)과 촬영 이미지(S3) 보관</td></tr>
-</table>
-
-**3-2. 서비스 구성도**
-
-<!-- TODO: 시스템 아키텍처 이미지로 교체 -->
-<img width="100%" alt="시스템 아키텍처" src="아키텍처_이미지_URL" />
-
-**3-3. AI 분석 파이프라인**
-
-<!-- TODO: 파이프라인 이미지로 교체 -->
-<img width="100%" alt="AI 분석 파이프라인" src="파이프라인_이미지_URL" />
-
-```mermaid
-flowchart TD
-    A["구역 선택 · White / UV 동시 촬영"] --> B["이미지 품질 판정"]
-    B -- 부적합 --> A
-    B -- 적합 --> C["치아 세그멘테이션 · FDI 번호 부여"]
-    C --> E["White : YOLOv11-Seg 치석 검출"]
-    C --> F["UV : YOLOv11-Seg 치태 검출"]
-    E --> G["치석 영역과 겹치는 부분 제외<br/>(2차 검증)"]
-    F --> G
-    G --> H["치아별 면적 · 구역 점수 계산"]
-    H --> I["LLM 리포트 생성 · 이전 검사와 비교"]
-    I --> J["3D 구강 시각화 · 리포트 · 이력 확인"]
-```
-
-**3-4. 하드웨어 구성 및 개발 과정**
-
-<!-- TODO: 디바이스 외형·내부 배치 이미지 -->
-<img width="100%" alt="하드웨어 구성" src="HW구성도_URL" />
-
-<table>
-  <tr><th width="120">구성</th><th>포함 부품</th></tr>
-  <tr><td>삽입부</td><td>OV3660 카메라, 백색 LED, UV(405nm) LED, 0.3mm 황색 PVC 필터</td></tr>
-  <tr><td>본체</td><td>XIAO ESP32-S3 Sense, 배터리, 5V 부스트, 촬영 버튼</td></tr>
-  <tr><td>충전부</td><td>충전 모듈</td></tr>
-</table>
-
-입안에 들어갈 크기와 가정용 단가를 맞추기 위해 여러 번의 시제품을 거쳐 최종 기기를 완성했습니다.
-
-<table>
-  <tr><th width="100">항목</th><th>문제</th><th>시도</th><th>결정</th></tr>
-  <tr><td>카메라</td><td>가정용이라 단가가 중요</td><td>저렴한 모듈부터 비교</td><td>근접 촬영이 되는 OV3660</td></tr>
-  <tr><td>외형</td><td>여러 사용 환경에 견뎌야 함</td><td>3D 프린팅 시제품</td><td>내구성을 위해 CNC 가공</td></tr>
-  <tr><td>보드</td><td>좁은 삽입부라 선 연결·땜질 불가</td><td>범용 보드 배치 검토</td><td>전용 PCB 제작, 메인·LED 보드 분리</td></tr>
-  <tr><td>필터</td><td>반사광이 붉은 형광을 가림</td><td>색·두께별 필터 비교</td><td>0.3mm 황색 PVC</td></tr>
-</table>
-
-**3-5. 데이터 및 모델**
-- 팀이 제작한 전용 디바이스로 실제 촬영 참가자 85명의 구강을 직접 촬영해 원본 3,003장을 수집하고, 증강을 거쳐 8,000장 이상으로 학습했습니다.
-- 백색광 영상은 치석, UV 영상은 치태를 각각 YOLOv11-Seg로 학습하고, UV에서도 형광을 띨 수 있는 치석은 백색광에서 찾은 치석 영역을 이용해 치태 후보에서 제외합니다.
-
-**3-6. 리포트 설계**
 
 처음에는 오늘 결과를, 다음부터는 변화를 먼저 보도록 설계했습니다.
 
